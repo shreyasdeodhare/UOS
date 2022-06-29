@@ -1,0 +1,17 @@
+echo "MENU 1.List of the files
+      2.Today's Date
+      3.Process Status
+      4.Users of System
+      5.Display Present Working Directory
+      6.Quit
+      Enter your choice : "
+read choice;
+case "$choice" in
+      1) ls;;
+      2) date;;
+      3) ps;;
+      4) whoami;;
+      5) pwd;;
+      6) exit;;
+      *) echo "Invalid Choice";;
+esac

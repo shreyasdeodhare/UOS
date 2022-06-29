@@ -1,0 +1,30 @@
+diskArray = [10,20,30,1,5,2,63,3,50,23,36,6,31,32,52,90,60,96,552,22,31,2566,34,69,15,236,2454,3665,14,24]
+arr = [12,10,8,7,6,5,3,2]
+length = len(arr)
+diskArrayRemovedElement = []
+print("Initially Disk array contents are : \n",diskArray)
+print("Initially array contents are : \n",arr)
+flag = 0
+while(len(arr)>1):
+    flag = 1
+    print("Process needs inode : ")
+    print("removing element : ",arr[-1])
+    arr.pop()
+    print("Array contents are  : ", arr)
+print("\nRemember inode is : ",arr[0])
+print("\nSearching for elements greater than remember inode in disk array : ")
+temp = arr[0]
+arr.clear()
+for i in range(len(diskArray)):
+    if length<=len(arr):
+        break
+    if(diskArray[i]>temp):
+        diskArrayRemovedElement.append(diskArray[i])
+        arr.append(diskArray[i])
+arr.sort(reverse=True)
+print("Array contents are : ",arr)
+print("Index now pointing to : ",arr[-1])
+for i in range(len(diskArrayRemovedElement)):
+    diskArray.remove(diskArrayRemovedElement[i])
+diskArray.append(temp)
+print("Disk element contents are : \n",diskArray)

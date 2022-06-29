@@ -1,0 +1,49 @@
+#include<stdio.h>
+#include<sys/types.h>
+#include<dirent.h>
+#include<stdlib.h>
+#include<string.h>
+int main(int argc,char *argv[])
+{
+    DIR *dirp;
+    struct dirent *dir;
+    char dirname[100][100];
+    char temp[100];
+    int j,n,t;
+    int i=0;
+    if((dirp=opendir("."))==NULL)
+    {
+        perror("opendir");
+        exit(1);
+    }
+    else
+    {
+        while((dir=readdir(dirp))!=NULL)
+        {
+            if(dir->d_name[0]!='.')
+            {
+                strcpy(dirname[i],dir->d_name);
+                i++;
+            }
+            else
+            continue;
+        }
+        n=i;
+        for(i=0;i<n;i++)
+        {
+            for(j=i+1;j<n;j++)
+            {
+                if(strcmp((dirname[i]),dirname[j])>0)
+                {
+                    strcpy(temp,dirname[i]);
+                    strcpy(dirname[i],dirname[j]);
+                    strcpy(dirname[j],temp);
+                }
+            }
+        }
+        for(j=0;j<n;j++)
+        {
+            printf("%s\n",dirname[j]);
+        }
+    }
+}

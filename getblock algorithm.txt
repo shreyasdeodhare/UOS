@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node{
+	int data;
+	struct node* next;
+};
+
+struct double_node {
+	int data;
+	int delay_write;
+	struct double_node* next;
+	struct double_node* back;
+};
+
+struct node* create_node(int num){
+	struct node* temp = (struct node*)malloc(sizeof(struct node));
+	temp->data = num;
+	return temp;
+}
+
+struct double_node* create_double_node(int num){
+	struct double_node* temp = (struct double_node*)malloc(sizeof(struct double_node));
+	temp->data = num;
+	temp->next = NULL;
+	temp->back = NULL;
+	return temp;
+}
+
+
+void print_complete_data(struct node** a){
+	for(int i=0;i<4;i++){
+		struct node* root = a[i];
+		while(root!=NULL){
+			printf("%d ",root->data);
+			root = root->next;
+		}
+		printf("\n");
+	}
+}
+
+void print_free_list(struct double_node* f){
+	struct double_node* temp = f;
+	while(temp != NULL){
+		printf("%d -> ",temp->data);
+		temp = temp->next;
+	}
+}
+
+int check_for_freelist(int blkno,struct double_node* f){
+	struct double_node* temp = f;
+	while(temp!=NULL){
+		if (temp->data == blkno){
+			return 1;
+		}
+		temp = temp->next;
+	}
+	return 0;
+}
+
+struct double_node* remove_from_freelist(int blkno,struct double_node* f){
+	struct double_node* temp = f;
+	if (temp->data == blkno){
+		struct double_node* te = temp->next;
+		free(temp);
+		return te;
+	}
+	while(temp!=NULL){
+		if (temp->data == blkno){
+			temp->back->next = temp->next;
+			temp->next->back = temp->back;
+			free(temp);
+			break;
+		}
+		temp = temp->next;
+	}
+	return f;
+}
+
+int main(){
+	struct node* a[4];
+	struct double_node* free_list = NULL;
+	free_list = create_double_node(3);
+	free_list->next = create_double_node(5);
+	free_list->next->delay_write = 1;
+	free_list->next->back = free_list;
+	free_list->next->next = create_double_node(4);
+	free_list->next->next->delay_write = 1;
+	free_list->next->next->back = free_list->next;
+	free_list->next->next->next = create_double_node(28);
+	free_list->next->next->next->back = free_list->next->next;
+	free_list->next->next->next->next = create_double_node(97);
+	free_list->next->next->next->next->back = free_list->next->next->next;
+	free_list->next->next->next->next->next = create_double_node(10);
+	free_list->next->next->next->next->next->back = free_list->next->next->next->next;
+	a[0] = create_node(28);
+	a[1] = create_node(17);
+	a[2] = create_node(98);
+	a[3] = create_node(3);
+	a[0]->next = create_node(4);
+	a[0]->next->next = create_node(64);
+	a[1]->next = create_node(5);
+	a[1]->next->next = create_node(97);
+	a[2]->next = create_node(50);
+	a[2]->next->next = create_node(10);
+	a[3]->next = create_node(35);
+	a[3]->next->next = create_node(99);
+	print_complete_data(a);
+	print_free_list(free_list);
+	int choice;
+	printf("\n\nEnter your choice\n1.search block	2.Exit : \n");
+	scanf("%d",&choice);
+	while(choice!=2){
+		printf("Enter the block number : ");
+		int blkno;
+		scanf("%d",&blkno);
+		int n = blkno%4;
+
+		struct node* root = a[n];
+		int flag = 1;
+		if (root->data == blkno){
+			flag = 0;
+			if(check_for_freelist(blkno,free_list)){
+				free_list = remove_from_freelist(blkno,free_list);
+			}
+		}
+		while(root->next != NULL){
+			if (root->next->data == blkno){
+				flag = 0;
+				if(check_for_freelist(blkno,free_list)){
+					free_list = remove_from_freelist(blkno,free_list);
+					printf("\nScenario : 1 block found on free list removed from free list\n");
+					break;
+				}
+				else{
+					printf("\nblock is busy\n");
+				}
+			}
+			root = root->next;
+		}
+		if(flag){
+			if (free_list->delay_write == 0){
+				free_list = remove_from_freelist(free_list->data,free_list);
+				printf("\nScenario : 2 block is not on free list so removed first block from free list\n");
+			}
+			else{
+				struct double_node* temp = free_list;
+				while(temp->delay_write	!= 0){
+					temp = temp->next;
+				}
+				printf("\nScenario : 3 block is not on free list removed %d becuase of delay writes\n",temp->data);
+				remove_from_freelist(temp->data,free_list);
+			}
+			root->next = create_node(blkno);
+			root = root->next;
+			root->next = NULL;
+		}
+		print_complete_data(a);
+		print_free_list(free_list);
+
+		printf("\n\nEnter your choice \n1. search block	2.Exit : \n");
+		scanf("%d",&choice);
+	}
+}

@@ -1,0 +1,36 @@
+add=address=1
+ut=unit=10000
+free_address=list()
+available_unit=[]
+Y=True
+while Y:
+    print("\nEnter process request(r) or process free(f) :")
+    ch=input()
+    if ch =='r':
+	    print("How many process units are required : ")
+	    process_unit=int(input())
+	    address=address+process_unit
+	    unit=unit-process_unit
+	    free_address=[(address,unit)]
+	    print("\nAddress\t\t\tunits")
+	    for free in free_address:
+    		print(free[0],"\t\t\t",free[1])
+    elif ch=='f':
+	    print("how many process get free from start : ")
+	    free_unit = int(input())
+	    add=add
+	    ut=add+free_unit
+	    free_address.append((add,ut))
+	    add=add+free_unit
+	    free_address.sort()
+	    print("\nAddress\t\t\tunits")
+	    for available in free_address:
+    		print(available[0],"\t\t\t",available[1])
+    else:
+	    print("Wrong Choice...Enter Valid Choice...");
+	    print("\nWant to continue(Y/N) : ")
+	    Y=input()
+	    if Y=='Y':
+		    Y=True
+	    else:
+		    Y=False
